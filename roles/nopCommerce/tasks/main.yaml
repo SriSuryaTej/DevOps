@@ -1,0 +1,88 @@
+    - name: creating nop folder
+      ansible.builtin.file:
+        path: nop
+        state: directory
+    - name: Downloading debian package
+      ansible.builtin.get_url:
+        url: "{{ debian_package_url }}"
+        dest: /nop
+    - name: installing the debian package
+      ansible.builtin.apt:
+        deb: "{{ debian_package_installation_location }}"
+    - name: Installing .netcore runtimes
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        update_cache: yes
+        state: present
+      with_items: 
+            - apt-transport-https
+            - aspnetcore-runtime-6.0
+    - name: Installing nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+      notify:
+            - start nginx
+    - name: configuring Reverse proxy to forward requests
+      ansible.builtin.template:
+        src: default.j2
+        dest: "{{  destination_of_config_reverse_proxy_to_forward_requests}}"
+      notify:
+            - restart nginx
+    - name: Installing mysql
+      ansible.builtin.apt:
+        name: 
+            - mysql-server
+            - mysql-client
+            - python3-mysqldb
+            - libmysqlclient-dev
+        update_cache: yes
+        state: present
+    - name: Creating MYSQL user
+      ansible.builtin.mysql_user:
+        name: "{{ mysql_username }}"
+        password: "{{ mysql_password }}"
+        priv: '*.*:ALL,GRANT'
+        state: present
+    - name: Configuring mysqld.cnf
+      ansible.builtin.template:
+        src: mysqld.cnf.j2
+        dest: "{{ mysql_config_file }}"
+      notify:
+            - restart mysql
+    - name: creating directories to install nopcommerce
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items: 
+            - /var/www/nopCommerce450
+            - /var/www/nopCommerce450/bin
+            - /var/www/nopCommerce450/logs
+    - name: Downloading nopCommere
+      ansible.builtin.get_url:
+        url: "{{ nopCommerce_package_url }}"
+        dest: "{{ nopCommerce_download_loc }}"
+    - name: downloading unzip
+      ansible.builtin.apt:
+        name: unzip
+        update_cache: yes
+        state: present
+    - name: unzipping nop commerce
+      ansible.builtin.unarchive:
+        src: "{{ unzippig_src_location }}"
+        dest: "{{ unzipping_dest_location }}"
+        remote_src: yes
+    - name: changing file permissions
+      ansible.builtin.file:
+        path: "{{ path }}"
+        state: directory
+        recurse: yes
+        owner: "{{ owner }}"
+        group: "{{ group }}"
+    - name: copying nopCommerce450.service
+      ansible.builtin.template:
+        src: nopCommerce450.service.j2
+        dest: "{{ dest_of_service_file }}"
+      notify: 
+            - start nopCommerce
+            - restart nginx

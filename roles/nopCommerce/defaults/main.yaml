@@ -1,0 +1,28 @@
+# .Netruntime dependencies
+debian_package_url: https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
+debian_package_installation_location: nop/packages-microsoft-prod.deb
+
+# nginx default file vars
+proxy_pass: http://localhost:5000
+destination_of_config_reverse_proxy_to_forward_requests: /etc/nginx/sites-available/default
+
+#mysql vars
+mysql_username: surya
+mysql_password: Suryatej123 
+mysql_config_file: /etc/mysql/mysql.conf.d/mysqld.cnf
+
+# mysqld config file vars
+mysqld_user: mysql
+# port: 3306
+bind_address: 0.0.0.0
+mysqlx_bind_address: 0.0.0.0
+
+#nopCommerce vars
+nopCommerce_package_url: https://github.com/nopSolutions/nopCommerce/releases/download/release-4.50.2/nopCommerce_4.50.2_NoSource_linux_x64.zip
+nopCommerce_download_loc: /var/www/nopCommerce450/ 
+unzippig_src_location: /var/www/nopCommerce450/nopCommerce_4.50.2_NoSource_linux_x64.zip
+unzipping_dest_location: /var/www/nopCommerce450/
+path: /var/www/nopCommerce450
+owner: www-data
+group: www-data
+dest_of_service_file: /etc/systemd/system/nopCommerce450.service

@@ -1,0 +1,16 @@
+    - name: start nopCommerce
+      service:
+        name: nopCommerce450
+        state: started
+    - name: start nginx
+      service:
+        name: nginx
+        state: started
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+    - name: restart mysql
+      service:
+        name: mysql
+        state: restarted
