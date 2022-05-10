@@ -1,0 +1,4 @@
+ - name: start odoo service
+   service: 
+     name: odoo
+     state: started

@@ -1,0 +1,31 @@
+user: root
+odoo_location: /home/ansible/odoo
+git_repo_to_clone: https://github.com/odoo/odoo.git
+python_version: 
+pip_version: python3-pip
+postgresql:
+    - postgresql
+    - postgresql-client
+user_location: /home/ansible/
+python_libraries:
+    - python3-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - libldap2-dev
+    - libsasl2-dev
+    - libtiff5-dev
+    - libjpeg8-dev
+    - libopenjp2-7-dev
+    - zlib1g-dev
+    - libfreetype6-dev 
+    - liblcms2-dev
+    - libwebp-dev
+    - libharfbuzz-dev
+    - libfribidi-dev
+    - libxcb1-dev
+    - libpq-dev
+pip_tools: 
+    - setuptools
+    - wheel
+npm_framework: rtlcss
+command_to_run_server: python3 odoo-bin --addons-path=addons -d mydb

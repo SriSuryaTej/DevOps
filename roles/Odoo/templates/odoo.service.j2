@@ -1,0 +1,15 @@
+[Unit]
+Description=Odoo Docs
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+WorkingDirectory="{{ user_location }}/odoo"
+User="{{user}}"
+Group="{{user}}"
+RestartSec=10
+Restart=always
+Execstart=/usr/bin/python3 odoo-bin --addons-path= addons -d mydb
+
+[Install]
+WantedBy=multi-user.target

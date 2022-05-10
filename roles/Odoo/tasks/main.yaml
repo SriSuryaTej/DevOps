@@ -1,0 +1,87 @@
+    - name: Verifying that odoo is present or not
+      stat:
+        path: /home/ansible/odoo
+      register: odoo_status
+    - name: Cloning Odoo Community Edition from GIT
+      git:
+        repo: https://github.com/odoo/odoo.git
+        clone: yes
+        dest: odoo
+        update: yes
+      when: not odoo_status.stat.exists
+    - name: Installing Python
+      apt:
+        name: python3
+        state: present
+    - name: Installing Pip
+      apt:
+        name: python3-pip
+        state: present
+    - name: Installing Postgresql
+      apt:
+        name:
+          - postgresql
+          - postgresql-client
+        state: present
+    - name: Postgresql user
+      command: "sudo -u postgres createuser -s $USER"
+      args:
+        chdir: /home/ansible/
+      ignore_errors: yes
+    - name: Creating Database
+      command: "createdb $USER"
+      args:
+        chdir: /home/ansible/
+      ignore_errors: yes
+
+    - name: Installing required Libraries
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+          - python3-dev
+          - libxml2-dev
+          - libxslt1-dev
+          - libldap2-dev
+          - libsasl2-dev
+          - libtiff5-dev
+          - libjpeg8-dev
+          - libopenjp2-7-dev
+          - zlib1g-dev
+          - libfreetype6-dev
+          - liblcms2-dev
+          - libwebp-dev
+          - libharfbuzz-dev
+          - libfribidi-dev
+          - libxcb1-dev
+          - libpq-dev
+    - name: Using pip to install
+      pip:
+        name:
+          - setuptools
+          - wheel
+        state: present
+    - name: running pip on requirements file
+      pip:
+        requirements: /home/ansible/odoo/requirements.txt
+    - name: Installing nodejs
+      apt:
+        name: nodejs
+        state: present
+    - name: Installing npm
+      apt:
+        name: npm
+        state: present
+    - name: Installing RTLCSS framework
+      npm:
+        name: rtlcss
+        global: yes
+        state: present
+    - name: Copying odoo.service file
+      copy:
+        src: files/odoo.service
+        dest: /lib/systemd/system/odoo.service
+      notify:
+        - start odoo service 
+ 
+    
